@@ -14,9 +14,9 @@ void ApplicationUI::getTcpServer()
 {
     QTextStream qIn(stdin);
     QTextStream qOut(stdout);
-    qOut << "IP:" << endl;
+    qOut << "IP (default=127.0.0.1):" << endl;
     QString host = qIn.readLine();
-    qOut << "Port:" << endl;
+    qOut << "Port (default=27015):" << endl;
     quint16 port = qIn.readLine().toUInt();
 
     tcpClient = new TcpClient(host, port);
