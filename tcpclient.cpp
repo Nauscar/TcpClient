@@ -3,6 +3,9 @@
 TcpClient::TcpClient(QString host, quint16 port)
     : connected(true), host(host), port(port)
 {
+    this->host = host.length() > 0 ? host : "127.0.0.1";
+    this->port = port > 0 ? port : 27015;
+
     tcpClient = new QTcpSocket(this);
 
     connect(tcpClient, SIGNAL(readyRead()), this, SLOT(readFortune()));

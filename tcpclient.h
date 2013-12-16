@@ -12,7 +12,7 @@ class TcpClient : QObject
 {
     Q_OBJECT
 public:
-    TcpClient(QString host = "127.0.0.1", quint16 port = 27015);
+    TcpClient(QString host, quint16 port);
     virtual ~TcpClient(void);
     void RequestNewFortune(void);
     bool IsConnected(void);
