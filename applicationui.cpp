@@ -26,9 +26,13 @@ void ApplicationUI::getTcpServer()
 void ApplicationUI::handleClient()
 {
     QTextStream qIn(stdin);
-    while(tcpClient->IsConnected())
+    QTextStream qOut(stdout);
+    while(1)
     {
-        tcpClient->RequestNewFortune();
-        qIn.readLine();
+        //qOut << "Input message:" << endl;
+        QString input = qIn.readLine();
+        if(input.length()){
+            tcpClient->SendData(input);
+        }
     }
 }

@@ -1,54 +1,62 @@
 #include "tcpclient.h"
 
 TcpClient::TcpClient(QString host, quint16 port)
-    : connected(true), host(host), port(port)
 {
     this->host = host.length() > 0 ? host : "127.0.0.1";
     this->port = port > 0 ? port : 27015;
-
-    tcpClient = new QTcpSocket(this);
-
-    connect(tcpClient, SIGNAL(readyRead()), this, SLOT(readFortune()));
-    connect(tcpClient, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(displayError(QAbstractSocket::SocketError)));
+    tcpConnect();
 }
 
 TcpClient::~TcpClient()
 {
+    tcpClient->abort();
     delete tcpClient;
     delete networkSession;
 }
 
-bool TcpClient::IsConnected()
+void TcpClient::tcpConnect()
 {
-    return connected;
+    QNetworkConfigurationManager manager;
+    networkSession = new QNetworkSession(manager.defaultConfiguration(), this);
+    connect(networkSession, SIGNAL(opened()), this, SLOT(sessionOpened()));
+    networkSession->open();
+
+    tcpClient = new QTcpSocket(this);
+
+    //connect(tcpClient, SIGNAL(readyRead()), this, SLOT(readData()));
+    connect(tcpClient, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(displayError(QAbstractSocket::SocketError)));
+
+    tcpClient->connectToHost(host, port, QIODevice::ReadWrite);
 }
 
-void TcpClient::RequestNewFortune()
+void TcpClient::SendData(QString message)
 {
-    blockSize = 0;
-    tcpClient->abort();
-    tcpClient->connectToHost(host, port);
+    if(tcpClient->waitForConnected()){
+        qDebug() << tcpClient->write(message.toStdString().c_str());
+    } else {
+        qCritical() << "Connection timeout occurred";
+    }
+    tcpClient->waitForReadyRead();
 }
 
 void TcpClient::displayError(QAbstractSocket::SocketError socketError)
 {
     switch (socketError) {
     case QAbstractSocket::RemoteHostClosedError:
-        qCritical() << "Error: Remote Host Closed.";
+        qCritical() << "Error: Remote Host Closed";
         break;
     case QAbstractSocket::HostNotFoundError:
-        qCritical() << "Error: Host Not Found.";
+        qCritical() << "Error: Host Not Found";
         break;
     case QAbstractSocket::ConnectionRefusedError:
-        qCritical() << "Error: Connection Refused.";
+        qCritical() << "Error: Connection Refused";
         break;
     default:
         qCritical() << tcpClient->errorString();
     }
-    connected = false;
 }
 
-void TcpClient::readFortune()
+void TcpClient::readData()
 {
     QDataStream in(tcpClient);
     in.setVersion(QDataStream::Qt_4_0);
@@ -76,4 +84,9 @@ void TcpClient::readFortune()
 
     QTextStream qOut(stdout);
     qOut << currentFortune << endl;
+}
+
+void TcpClient::sessionOpened()
+{
+    //TODO: Add configuration settings here.
 }
