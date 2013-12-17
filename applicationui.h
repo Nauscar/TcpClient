@@ -2,9 +2,11 @@
 #define APPLICATIONUI_H
 
 #include <QString>
+#include <QStringList>
 #include <QTextStream>
 
 #include "tcpclient.h"
+#include "datahandler.h"
 
 class ApplicationUI
 {
@@ -14,8 +16,7 @@ public:
     void getTcpServer(void);
 private:
     TcpClient* tcpClient;
-private:
-    void handleClient(void);
+    DataHandler* dataHandler;
 };
 
 #endif // APPLICATIONUI_H

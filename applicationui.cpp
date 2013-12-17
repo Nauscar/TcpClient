@@ -7,6 +7,7 @@ ApplicationUI::ApplicationUI()
 
 ApplicationUI::~ApplicationUI()
 {
+    delete dataHandler;
     delete tcpClient;
 }
 
@@ -20,19 +21,5 @@ void ApplicationUI::getTcpServer()
     quint16 port = qIn.readLine().toUInt();
 
     tcpClient = new TcpClient(host, port);
-    handleClient();
-}
-
-void ApplicationUI::handleClient()
-{
-    QTextStream qIn(stdin);
-    QTextStream qOut(stdout);
-    while(1)
-    {
-        //qOut << "Input message:" << endl;
-        QString input = qIn.readLine();
-        if(input.length()){
-            tcpClient->SendData(input);
-        }
-    }
+    dataHandler = new DataHandler(tcpClient);
 }

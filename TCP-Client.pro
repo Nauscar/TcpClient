@@ -17,8 +17,10 @@ TEMPLATE = app
 
 SOURCES += main.cpp \
     applicationui.cpp \
-    tcpclient.cpp
+    tcpclient.cpp \
+    datahandler.cpp
 
 HEADERS += \
     applicationui.h \
-    tcpclient.h
+    tcpclient.h \
+    datahandler.h

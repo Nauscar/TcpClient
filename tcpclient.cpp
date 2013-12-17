@@ -16,27 +16,21 @@ TcpClient::~TcpClient()
 
 void TcpClient::tcpConnect()
 {
-    QNetworkConfigurationManager manager;
-    networkSession = new QNetworkSession(manager.defaultConfiguration(), this);
-    connect(networkSession, SIGNAL(opened()), this, SLOT(sessionOpened()));
-    networkSession->open();
-
     tcpClient = new QTcpSocket(this);
 
-    //connect(tcpClient, SIGNAL(readyRead()), this, SLOT(readData()));
+    connect(tcpClient, SIGNAL(readyRead()), this, SLOT(readData()));
     connect(tcpClient, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(displayError(QAbstractSocket::SocketError)));
 
     tcpClient->connectToHost(host, port, QIODevice::ReadWrite);
 }
 
-void TcpClient::SendData(QString message)
+void TcpClient::SendData(QByteArray data)
 {
     if(tcpClient->waitForConnected()){
-        qDebug() << tcpClient->write(message.toStdString().c_str());
+        tcpClient->write(data);
     } else {
         qCritical() << "Connection timeout occurred";
     }
-    tcpClient->waitForReadyRead();
 }
 
 void TcpClient::displayError(QAbstractSocket::SocketError socketError)
@@ -58,35 +52,10 @@ void TcpClient::displayError(QAbstractSocket::SocketError socketError)
 
 void TcpClient::readData()
 {
-    QDataStream in(tcpClient);
-    in.setVersion(QDataStream::Qt_4_0);
+    QTcpSocket* myServer = qobject_cast<QTcpSocket*>(sender());
+    QByteArray reply = myServer->readAll();
 
-    if (blockSize == 0) {
-        if (tcpClient->bytesAvailable() < (int)sizeof(quint16)){
-            return;
-        }
+    qDebug() << QString(reply);
 
-        in >> blockSize;
-    }
-
-    if (tcpClient->bytesAvailable() < blockSize)
-        return;
-
-    QString nextFortune;
-    in >> nextFortune;
-
-    if (nextFortune == currentFortune) {
-        QTimer::singleShot(0, this, SLOT(requestNewFortune()));
-        return;
-    }
-
-    currentFortune = nextFortune;
-
-    QTextStream qOut(stdout);
-    qOut << currentFortune << endl;
-}
-
-void TcpClient::sessionOpened()
-{
-    //TODO: Add configuration settings here.
+    emit ServerReply();
 }

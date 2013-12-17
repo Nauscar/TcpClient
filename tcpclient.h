@@ -11,13 +11,15 @@
 #include <QtNetwork/QNetworkSession>
 #include <QtNetwork/QAbstractSocket>
 
-class TcpClient : QObject
+class TcpClient : public QObject
 {
     Q_OBJECT
 public:
     TcpClient(QString host, quint16 port);
     virtual ~TcpClient(void);
-    void SendData(QString message);
+    void SendData(QByteArray data);
+signals:
+    void ServerReply(void);
 private:
     QTcpSocket* tcpClient;
     QNetworkSession* networkSession;
@@ -29,7 +31,6 @@ private:
 private slots:
     void displayError(QAbstractSocket::SocketError socketError);
     void readData(void);
-    void sessionOpened(void);
 private:
     void tcpConnect(void);
 };
