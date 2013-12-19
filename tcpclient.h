@@ -19,7 +19,7 @@ public:
     virtual ~TcpClient(void);
     void SendData(QByteArray data);
 signals:
-    void ServerReply(void);
+    void ServerReply(QString);
 private:
     QTcpSocket* tcpClient;
     QNetworkSession* networkSession;

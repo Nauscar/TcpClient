@@ -8,6 +8,8 @@ QT       += core network
 
 QT       -= gui
 
+LIBS     += -luser32
+
 TARGET = TCP-Client
 CONFIG   += console
 CONFIG   -= app_bundle

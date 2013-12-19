@@ -57,5 +57,5 @@ void TcpClient::readData()
 
     qDebug() << QString(reply);
 
-    emit ServerReply();
+    emit ServerReply(QString(reply));
 }

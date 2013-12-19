@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QStringList>
+#include <Windows.h>
 
 #include "tcpclient.h"
 
@@ -18,6 +19,9 @@ private:
     int index;
 private slots:
     void fetchNewData(void);
+    void newData(QString);
+private:
+    void sendKey(int vkey);
 };
 
 #endif // DATAHANDLER_H
