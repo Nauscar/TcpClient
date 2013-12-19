@@ -15,10 +15,8 @@ public:
     virtual ~DataHandler();
 private:
     TcpClient* client;
-    QStringList debug;
     int index;
 private slots:
-    void fetchNewData(void);
     void newData(QString);
 private:
     void sendKey(int vkey);

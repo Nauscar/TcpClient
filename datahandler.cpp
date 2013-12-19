@@ -2,18 +2,10 @@
 
 DataHandler::DataHandler(TcpClient* client) : client(client), index(0)
 {
-    this->debug = QString("This is a debug statement").split(" ");
     connect(client, SIGNAL(ServerReply(QString)), this, SLOT(newData(QString)));
-    //fetchNewData();
 }
 
 DataHandler::~DataHandler() {}
-
-void DataHandler::fetchNewData()
-{
-    QString tmp = debug.at(++index % debug.length());
-    client->SendData(QByteArray(tmp.toStdString().c_str()));
-}
 
 void DataHandler::newData(QString action)
 {
